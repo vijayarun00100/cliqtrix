@@ -16,7 +16,7 @@ app = FastAPI(title="G-Assistant Backend")
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
 ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
 REDIRECT_URI = "https://cliqtrix-3aru.onrender.com/oauth/callback"
-OAUTH_BASE = "https://accounts.zoho.com/oauth/v2"
+OAUTH_BASE = "https://accounts.zoho.in/oauth/v2"
 
 @app.get("/oauth/authorize")
 def authorize():
