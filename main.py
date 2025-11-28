@@ -22,13 +22,14 @@ OAUTH_BASE = "https://accounts.zoho.in/oauth/v2"
 def authorize():
     auth_url = (
         f"{OAUTH_BASE}/auth?"
-        f"scope=ZohoMail.messages.ALL,ZohoMail.accounts.READ&"
+        f"scope=ZohoMail.messages.ALL,ZohoMail.accounts.READ,ZohoMail.folders.READ&"
         f"client_id={ZOHO_CLIENT_ID}&"
         f"response_type=code&"
         f"access_type=offline&"
         f"redirect_uri={REDIRECT_URI}"
     )
     return {"auth_url": auth_url}
+
 
 @app.get("/oauth/callback")
 async def callback(code: str):
