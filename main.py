@@ -73,9 +73,11 @@ async def draft_email(request: Request):
 
 @app.get("/inbox")
 async def inbox(request: Request):
-    token = request.headers.get("x-zoho-oauthtoken")
-    emails = await zoho_mail.get_inbox(token)
+    access_token = request.headers.get("x-zoho-oauthtoken")
+    refresh_token = request.headers.get("x-zoho-refresh")
+    emails = await zoho_mail.get_inbox(access_token, refresh_token)
     return {"emails": emails}
+
 
 @app.get("/")
 def root():
