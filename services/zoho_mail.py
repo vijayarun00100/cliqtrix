@@ -1,6 +1,6 @@
 import httpx
 
-BASE = "https://mail.zoho.com/api"
+BASE = "https://mail.zoho.in/api"
 
 async def get_inbox(token: str, limit: int = 5):
     headers = {"Authorization": f"Zoho-oauthtoken {token}"}
