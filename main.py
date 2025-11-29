@@ -11,12 +11,29 @@ import os, json
 import httpx
 from services.tasks import extract_tasks
 from services.events import extract_events
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(title="G-Assistant Backend")
 
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
 ZOHO_CLIENT_SECRET = os.getenv("ZOHO_CLIENT_SECRET")
 REDIRECT_URI = "https://cliqtrix-3aru.onrender.com/oauth/callback"
 OAUTH_BASE = "https://accounts.zoho.in/oauth/v2"
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mail.zoho.in",
+        "https://mail.zoho.com",
+        "https://mail.zoho.eu",
+        "https://mail.zoho.jp",
+        "https://mail.zoho.com.cn"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/oauth/authorize")
 def authorize():
