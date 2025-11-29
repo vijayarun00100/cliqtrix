@@ -1,0 +1,72 @@
+[info] [2025-11-28T19:22:08.158Z] : 
+[info] [2025-11-28T19:22:08.161Z] : Click this URL to login to your Zoho Account
+[info] [2025-11-28T19:22:08.162Z] : https://accounts.zoho.com/oauth/v2/auth?client_id=1000.gnjph6g96nf23jd4u14tba2egykhik&scope=ZAPPS.apps.ALL%20AaaServer.profile.READ%20ZMProcessors.connectors.CREATE&response_type=code&access_type=offline&prompt=consent&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] [2025-11-28T19:22:08.162Z] : Note: To login to CN DC, update the above URL from accounts.zoho.com to accounts.zoho.com.cn
+[info] [2025-11-28T19:22:08.162Z] : 
+[debug] [2025-11-28T19:22:33.867Z] : DCType Of the user is in
+[debug] [2025-11-28T19:22:33.872Z] : >>>> HTTP REQUEST : POST https://accounts.zoho.in/oauth/v2/token 
+<request query omitted>
+
+[debug] [2025-11-28T19:22:34.146Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:22:34 GMT","content-type":"application/json;charset=UTF-8","content-length":"336","connection":"keep-alive","set-cookie":["zalb_6e73717622=13e67ac15bc4d3ece130966123511df7; Path=/; Secure; HttpOnly","iamcsr=c35e7348-ffeb-446d-8bb2-4132eb2f3232;path=/;SameSite=Strict;Secure;priority=high"],"cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.zohocdn.com https://*.zoho.com https://*.zoho.eu https://*.zoho.com.cn https://*.zoho.com.au https://*.zoho.jp https://*.zoho.uk https://*.zoho.sa https://*.zohocloud.ca; report-uri https://logsapi.zoho.in/csplog?service=accounts;","pragma":"no-cache","x-frame-options":"SAMEORIGIN","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[debug] [2025-11-28T19:22:34.147Z] : TOTAL TIME TAKEN : 272 ms
+
+[debug] [2025-11-28T19:22:34.157Z] : >>>> HTTP REQUEST : GET https://accounts.zoho.in/oauth/user/info 
+
+[debug] [2025-11-28T19:22:34.212Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:22:34 GMT","content-type":"application/json;charset=UTF-8","content-length":"124","connection":"keep-alive","set-cookie":["zalb_6e73717622=680d8e643c8d4f4ecb79bf7c0a6012e8; Path=/; Secure; HttpOnly","iamcsr=3976f11d-0689-49a4-baca-19a5fd43f48a;path=/;SameSite=Strict;Secure;priority=high"],"x-content-type-options":"nosniff","content-security-policy":"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.zohocdn.com https://*.zoho.com https://*.zoho.eu https://*.zoho.com.cn https://*.zoho.com.au https://*.zoho.jp https://*.zoho.uk https://*.zoho.sa https://*.zohocloud.ca; report-uri https://logsapi.zoho.in/csplog?service=accounts;","cache-control":"private,no-cache,no-store,max-age=0,must-revalidate","pragma":"no-cache","expires":"Thu, 01 Jan 1970 00:00:00 GMT","x-frame-options":"SAMEORIGIN","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[info] [2025-11-28T19:25:23.920Z] : ℹ Waiting for response from Sigma....
+
+[debug] [2025-11-28T19:25:23.923Z] : > refreshing access token <
+[debug] [2025-11-28T19:25:23.924Z] : >>>> HTTP REQUEST : POST https://accounts.zoho.in/oauth/v2/token 
+<request query omitted>
+
+[debug] [2025-11-28T19:25:24.113Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:25:24 GMT","content-type":"application/json;charset=UTF-8","content-length":"247","connection":"keep-alive","set-cookie":["zalb_6e73717622=dea4bb29906843a6fbdf3bd5c0e43d1d; Path=/; Secure; HttpOnly","iamcsr=209fb29a-1c12-4937-90e6-7889a9f1a82e;path=/;SameSite=Strict;Secure;priority=high"],"cache-control":"no-store","x-content-type-options":"nosniff","content-security-policy":"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.zohocdn.com https://*.zoho.com https://*.zoho.eu https://*.zoho.com.cn https://*.zoho.com.au https://*.zoho.jp https://*.zoho.uk https://*.zoho.sa https://*.zohocloud.ca; report-uri https://logsapi.zoho.in/csplog?service=accounts;","pragma":"no-cache","x-frame-options":"SAMEORIGIN","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[debug] [2025-11-28T19:25:24.114Z] : TOTAL TIME TAKEN : 189 ms
+
+[debug] [2025-11-28T19:25:24.139Z] : >>>> HTTP REQUEST : GET https://sigma.zoho.in/workspace/restapi/workspace 
+Query params: {"workspace_type":1}
+
+[debug] [2025-11-28T19:25:24.333Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:25:24 GMT","content-type":"application/json;charset=UTF-8","transfer-encoding":"chunked","connection":"keep-alive","set-cookie":["zalb_21ec4920ed=a1e534f3eaaa15b8292dd6f96ab68d94; Path=/; Secure; HttpOnly","zact=0748b8f8-eb7a-45a2-9324-e912d00e329d;path=/;SameSite=Strict;Secure;priority=high"],"x-content-type-options":"nosniff","cache-control":"private,no-cache,no-store,max-age=0,must-revalidate","pragma":"no-cache","expires":"Thu, 01 Jan 1970 00:00:00 GMT","x-frame-options":"SAMEORIGIN","vary":"accept-encoding","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[debug] [2025-11-28T19:25:24.334Z] : TOTAL TIME TAKEN : 194 ms
+
+[info] [2025-11-28T19:25:24.346Z] : ✔ Since you only have one Workspace, 'alias', it has been set as the default Workspace.
+[info] [2025-11-28T19:26:01.345Z] : Initializing project at:  /home/vijayarun/cliqtrix/Cliqtrix_AI_Assistant
+[info] [2025-11-28T19:26:01.346Z] : Installing NPM dependencies...
+[info] [2025-11-28T19:26:03.330Z] : Project Initialized  /home/vijayarun/cliqtrix/Cliqtrix_AI_Assistant
+[info] [2025-11-28T19:26:03.333Z] : ℹ Waiting for response from Sigma....
+
+[debug] [2025-11-28T19:26:03.335Z] : >>>> HTTP REQUEST : POST https://sigma.zoho.in/workspace/restapi/alias/apps 
+Query params: {"service_no":6,"app_name":"Cliqtrix_AI_Assistant","app_type":1,"description":"this is for testing purpose"}
+
+[debug] [2025-11-28T19:26:03.903Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:26:03 GMT","content-type":"application/json;charset=UTF-8","transfer-encoding":"chunked","connection":"keep-alive","set-cookie":["zalb_21ec4920ed=c3f376823b99b8d31b4a7da83109f8d5; Path=/; Secure; HttpOnly","zact=e33dd6bb-0408-4105-a502-db8ddd571a23;path=/;SameSite=Strict;Secure;priority=high"],"x-content-type-options":"nosniff","cache-control":"private,no-cache,no-store,max-age=0,must-revalidate","pragma":"no-cache","expires":"Thu, 01 Jan 1970 00:00:00 GMT","x-frame-options":"SAMEORIGIN","vary":"accept-encoding","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[debug] [2025-11-28T19:26:03.903Z] : TOTAL TIME TAKEN : 568 ms
+
+[debug] [2025-11-28T19:26:03.906Z] : Data written in app_info.json file
+[info] [2025-11-28T19:26:03.906Z] : ✔ Successfully created the extension in Sigma.
+[debug] [2025-11-28T19:26:03.906Z] : app_info.json File exists.
+[info] [2025-11-28T19:26:03.909Z] : ℹ Waiting for response from Sigma....
+
+[debug] [2025-11-28T19:26:03.910Z] : >>>> HTTP REQUEST : GET https://sigma.zoho.in/workspace/restapi/alias/apps/internal_ZET_download/92836740-a461-4bec-8e3d-e3d7bd6cfc11 
+Query params: {}
+
+[debug] [2025-11-28T19:26:04.046Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 28 Nov 2025 19:26:03 GMT","content-type":"application/zip;charset=UTF-8","transfer-encoding":"chunked","connection":"keep-alive","set-cookie":["zalb_21ec4920ed=a1e534f3eaaa15b8292dd6f96ab68d94; Path=/; Secure; HttpOnly","zact=2fb64db8-46c9-4b01-910f-2ec01d40767f;path=/;SameSite=Strict;Secure;priority=high"],"x-content-type-options":"nosniff","cache-control":"private,no-cache,no-store,max-age=0,must-revalidate","pragma":"no-cache","expires":"Thu, 01 Jan 1970 00:00:00 GMT","x-frame-options":"SAMEORIGIN","content-disposition":"attachment; filename=Cliqtrix_AI_Assistant-1.0.zip","content-language":"en-US","strict-transport-security":"max-age=64072000; includeSubDomains; preload"}
+
+[debug] [2025-11-28T19:26:04.047Z] : TOTAL TIME TAKEN : 136 ms
+
+[debug] [2025-11-28T19:26:04.048Z] : Zip file is downloaded
+[info] [2025-11-28T19:26:04.107Z] : ✔ Your extension has been set up successfully.
+[error] [2025-11-28T19:26:04.113Z] : uncaughtException: ENOENT: no such file or directory, open '/home/vijayarun/cliqtrix/Cliqtrix_AI_Assistant/app_file.zip'
+Error: ENOENT: no such file or directory, open '/home/vijayarun/cliqtrix/Cliqtrix_AI_Assistant/app_file.zip'
+[info] [2025-11-28T19:26:04.115Z] : Run the following commands:
+[info] [2025-11-28T19:26:04.115Z] : cd 'Cliqtrix_AI_Assistant'
+[info] [2025-11-28T19:26:04.116Z] : zet run

@@ -1,0 +1,1 @@
+{"defaultLocale":"en","connectors":[],"whiteListedDomains":[],"service":"MAIL","cspDomains":{"connect-src":[]},"storage":true,"locale":["en"],"config":[],"modules":{"widgets":[{"name":"AppName","location":"zoho.mail.preview.rightpanel","url":"/app/widget.html"}]}}

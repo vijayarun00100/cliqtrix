@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script async=false>
+    (function() {
+      var src = window.location.host.split(".").slice(2).join(".") === "com.cn" ? 
+        "https://js-stratus.zohostatic.com.cn/sigma/client/sdk/v1/sigma-sdk.min.js" : 
+        "https://static.zohocdn.com/sigma/client/sdk/v1/sigma-sdk.min.js";
+      document.write('<script src="' + src + '"><\/script>');
+    })();
+ </script>
+ <script async=false>
+   window.AppSDK = SigmaSDK.MAIL.init(() =>{});
+ </script>
+</head>
+<body>
+  <h2>This is a sample Widget built using Zoho Extension toolkit.</h2>
+</body>
+</html>
