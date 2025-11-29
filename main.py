@@ -81,22 +81,21 @@ async def events(request: Request):
 async def summarize_email(request: Request):
     try:
         data = await request.json()
+        print("📩 Incoming webhook data:", data)   # 👈 Add this line
     except Exception:
-        # Zoho sends empty POST during webhook validation
+        print("⚠️ Zoho webhook ping received with no data.")
         return JSONResponse({"status": "ok", "message": "Webhook validated successfully"}, status_code=200)
 
-    # Validate data fields
     subject = data.get("subject")
     body = data.get("body")
 
     if not subject or not body:
-        # Return OK even for missing data to avoid webhook rejection
+        print("⚠️ Missing subject/body in webhook data:", data)
         return JSONResponse({"status": "ok", "message": "Awaiting valid email data"}, status_code=200)
 
-    # Summarize content
     res = await summarize(subject, body)
+    print("✅ Summary generated:", res)
 
-    # Sanitize null values
     def clean_nulls(obj):
         if isinstance(obj, dict):
             return {k: clean_nulls(v) for k, v in obj.items() if v is not None}
