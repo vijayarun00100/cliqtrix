@@ -1,4 +1,4 @@
-import os, httpx
+import os, httpx, json
 
 OPENROUTER_KEY = os.getenv("OPEN_ROUTER_KEY")
 BASE = os.getenv("OPENROUTER_BASE", "https://openrouter.ai/api/v1")
