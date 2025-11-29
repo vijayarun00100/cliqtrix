@@ -12,6 +12,7 @@ import httpx
 from services.tasks import extract_tasks
 from services.events import extract_events
 from fastapi.middleware.cors import CORSMiddleware
+from bs4 import BeautifulSoup
 app = FastAPI(title="G-Assistant Backend")
 
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
@@ -77,41 +78,65 @@ async def events(request: Request):
     return {"events": events}
 
 
+
+
 @app.post("/summarize")
 async def summarize_email(request: Request):
     try:
         data = await request.json()
-        print("📩 Incoming webhook data:", data)   # 👈 Add this line
+        print("📩 Incoming webhook data:", data)
     except Exception:
-        print("⚠️ Zoho webhook ping received with no data.")
-        return JSONResponse({"status": "ok", "message": "Webhook validated successfully"}, status_code=200)
+        print("⚠️ Zoho ping (no JSON).")
+        return JSONResponse({"status": "ok"}, status_code=200)
 
-    subject = data.get("subject")
-    body = data.get("body")
+    # Ignore validation pings
+    if "status" in data and data.get("status") == "ok":
+        print("✅ Validation ping.")
+        return JSONResponse({"status": "pong"}, status_code=200)
 
-    if not subject or not body:
-        print("⚠️ Missing subject/body in webhook data:", data)
-        return JSONResponse({"status": "ok", "message": "Awaiting valid email data"}, status_code=200)
+    # --- Extract subject and body from Zoho payload ---
+    subject = (
+        data.get("subject")
+        or data.get("Subject")
+        or data.get("summary")
+        or "No Subject"
+    )
 
+    body = (
+        data.get("body")
+        or data.get("content")
+        or data.get("message")
+        or data.get("html")
+        or data.get("text")
+        or ""
+    )
+
+    # If Zoho sends HTML, clean it
+    if body and "<" in body:
+        try:
+            soup = BeautifulSoup(body, "html.parser")
+            body = soup.get_text().strip()
+        except Exception as e:
+            print("⚠️ HTML parsing error:", e)
+
+    # Safety check
+    if not body.strip():
+        print(f"⚠️ Missing or empty body in webhook data: {data}")
+        return JSONResponse({"status": "ok"}, status_code=200)
+
+    print(f"✅ Parsed subject: {subject}")
+    print(f"✅ Parsed body: {body[:200]}...")  # limit preview
+
+    # --- Call your summarizer logic ---
     res = await summarize(subject, body)
-    print("✅ Summary generated:", res)
 
-    def clean_nulls(obj):
-        if isinstance(obj, dict):
-            return {k: clean_nulls(v) for k, v in obj.items() if v is not None}
-        elif isinstance(obj, list):
-            return [clean_nulls(v) for v in obj if v is not None]
-        else:
-            return obj
-
-    safe_res = clean_nulls(res)
+    print(f"✅ Summary generated for '{subject}':", res)
 
     return JSONResponse({
         "status": "success",
-        "summary": safe_res.get("summary", ""),
-        "sentiment": safe_res.get("sentiment", "Neutral")
+        "summary": res.get("summary", ""),
+        "sentiment": res.get("sentiment", "Neutral")
     })
-
 
 
 @app.post("/draft-reply")
