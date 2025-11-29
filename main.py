@@ -62,26 +62,26 @@ async def events(request: Request):
 
 @app.post("/summarize")
 async def summarize_email(request: Request):
-    try:
-        data = await request.json()
-        print("📩 Received Payload:", data)  # <--- Logs the data to Render console
+    data = await request.json()
+    res = await summarize(data["subject"], data["body"])
 
-        subject = data.get("subject", "")
-        body = data.get("body", "")
+    # Sanitize null values
+    def clean_nulls(obj):
+        if isinstance(obj, dict):
+            return {k: clean_nulls(v) for k, v in obj.items() if v is not None}
+        elif isinstance(obj, list):
+            return [clean_nulls(v) for v in obj if v is not None]
+        else:
+            return obj
 
-        # Validate input
-        if not subject and not body:
-            print("⚠️ Empty data received")
-            return JSONResponse({"error": "Missing subject or body"}, status_code=400)
+    safe_res = clean_nulls(res)
 
-        res = await summarize(subject, body)
-        print("✅ Summarization Result:", res)
+    return JSONResponse({
+    "status": "success",
+    "summary": safe_res.get("summary", ""),
+    "sentiment": safe_res.get("sentiment", "Neutral")
+    })
 
-        return JSONResponse(res)
-
-    except Exception as e:
-        print("❌ Error in /summarize:", e)
-        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.post("/draft-reply")
 async def draft_email(request: Request):
