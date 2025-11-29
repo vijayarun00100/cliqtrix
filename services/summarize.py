@@ -11,7 +11,13 @@ SYS = (
 async def summarize(subject: str, body: str):
     prompt = f"Subject: {subject}\n\nBody:\n{body}\n\nFormat output as:\nSUMMARY:\n- ...\nACTIONS:\n- ...\nSENTIMENT: ..."
     raw = await complete(SYS, prompt)
-
+    if not raw or raw.strip() == "":
+        print("⚠️ Empty LLM response, using fallback.")
+        return {
+            "summary": body[:150] + "..." if len(body) > 150 else body,
+            "actions": [],
+            "sentiment": "Neutral"
+        }
     summary, actions, sentiment = "", [], "neutral"
     lines = raw.splitlines()
     mode = None
