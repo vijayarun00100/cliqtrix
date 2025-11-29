@@ -79,8 +79,22 @@ async def events(request: Request):
 
 @app.post("/summarize")
 async def summarize_email(request: Request):
-    data = await request.json()
-    res = await summarize(data["subject"], data["body"])
+    try:
+        data = await request.json()
+    except Exception:
+        # Zoho sends empty POST during webhook validation
+        return JSONResponse({"status": "ok", "message": "Webhook validated successfully"}, status_code=200)
+
+    # Validate data fields
+    subject = data.get("subject")
+    body = data.get("body")
+
+    if not subject or not body:
+        # Return OK even for missing data to avoid webhook rejection
+        return JSONResponse({"status": "ok", "message": "Awaiting valid email data"}, status_code=200)
+
+    # Summarize content
+    res = await summarize(subject, body)
 
     # Sanitize null values
     def clean_nulls(obj):
@@ -94,10 +108,11 @@ async def summarize_email(request: Request):
     safe_res = clean_nulls(res)
 
     return JSONResponse({
-    "status": "success",
-    "summary": safe_res.get("summary", ""),
-    "sentiment": safe_res.get("sentiment", "Neutral")
+        "status": "success",
+        "summary": safe_res.get("summary", ""),
+        "sentiment": safe_res.get("sentiment", "Neutral")
     })
+
 
 
 @app.post("/draft-reply")
