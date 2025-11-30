@@ -1,19 +1,23 @@
+# main.py
 from dotenv import load_dotenv
 load_dotenv()   # <-- Must be first!
 from cachetools import TTLCache
 import time
+import asyncio
+import json
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from models import SummarizeRequest, DraftRequest
 from services.summarize import summarize
 from services.draft import draft
 from services import zoho_mail
-import os, json
+import os
 import httpx
 from services.tasks import extract_tasks
 from services.events import extract_events
 from fastapi.middleware.cors import CORSMiddleware
 from bs4 import BeautifulSoup
+
 app = FastAPI(title="G-Assistant Backend")
 
 ZOHO_CLIENT_ID = os.getenv("ZOHO_CLIENT_ID")
@@ -22,13 +26,44 @@ REDIRECT_URI = "https://cliqtrix-3aru.onrender.com/oauth/callback"
 OAUTH_BASE = "https://accounts.zoho.in/oauth/v2"
 summaries_db = TTLCache(maxsize=100, ttl=600)
 
+# --- simple in-memory pub-sub for SSE ---
+SUBSCRIBERS = []  # list of asyncio.Queue()
+
 def store_summary(user_id: str, summary: dict):
     summaries_db[user_id] = summary
 
 def get_summary(user_id: str):
     return summaries_db.get(user_id)
 
+def create_queue() -> asyncio.Queue:
+    return asyncio.Queue()
 
+async def broadcast_summary(obj: dict):
+    """Put obj into every subscriber queue (non-blocking)."""
+    dead = []
+    for q in SUBSCRIBERS:
+        try:
+            q.put_nowait(obj)
+        except Exception:
+            dead.append(q)
+    for q in dead:
+        try:
+            SUBSCRIBERS.remove(q)
+        except ValueError:
+            pass
+
+def format_sse(data: str, event: str = None) -> str:
+    """Format Server-Sent Event string."""
+    msg = ""
+    if event:
+        msg += f"event: {event}\n"
+    for line in data.splitlines():
+        msg += f"data: {line}\n"
+    msg += "\n"
+    return msg
+
+# ------------- CORS -------------
+# NOTE: include your Zest local origin (https://127.0.0.1:5000) for dev
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -36,15 +71,17 @@ app.add_middleware(
         "https://mail.zoho.com",
         "https://mail.zoho.eu",
         "https://mail.zoho.jp",
-        "https://mail.zoho.com.cn"
-         "https://127.0.0.1:5000",   # zet run origin
+        "https://mail.zoho.com.cn",
+        "https://127.0.0.1:5000",   # zet run origin (Zest local)
         "https://localhost:5000",
+        "http://127.0.0.1:5000",
+        "http://localhost:5000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+# ------------------------------------------------
 
 @app.get("/oauth/authorize")
 def authorize():
@@ -57,7 +94,6 @@ def authorize():
         f"redirect_uri={REDIRECT_URI}"
     )
     return {"auth_url": auth_url}
-
 
 @app.get("/oauth/callback")
 async def callback(code: str):
@@ -73,8 +109,6 @@ async def callback(code: str):
         tokens = r.json()
         return {"tokens": tokens}
 
-
-
 @app.post("/tasks")
 async def tasks(request: Request):
     data = await request.json()
@@ -86,9 +120,6 @@ async def events(request: Request):
     data = await request.json()
     events = await extract_events(data["body"])
     return {"events": events}
-
-
-
 
 @app.post("/summarize")
 async def summarize_email(request: Request):
@@ -140,12 +171,19 @@ async def summarize_email(request: Request):
     # --- Call your summarizer logic ---
     res = await summarize(subject, body)
     user_id = data.get("user_id", "anonymous")
-    store_summary(user_id, {
-    "subject": subject,
-    "summary": res.get("summary", ""),
-    "sentiment": res.get("sentiment", "Neutral"),
-    "timestamp": time.time()
-    })
+    stored = {
+        "subject": subject,
+        "summary": res.get("summary", ""),
+        "sentiment": res.get("sentiment", "Neutral"),
+        "timestamp": time.time()
+    }
+    store_summary(user_id, stored)
+
+    # broadcast to connected clients (non-blocking)
+    try:
+        await broadcast_summary({"user_id": user_id, "data": stored})
+    except Exception as e:
+        print("⚠️ broadcast error:", e)
 
     print(f"✅ Summary stored in memory for user {user_id}")
 
@@ -169,6 +207,34 @@ def get_stored_summary(user_id: str):
             status_code=404
         )
 
+# SSE streaming endpoint
+@app.get("/stream")
+async def stream_summaries():
+    """
+    Server-Sent Events endpoint.
+    Clients connect with EventSource('/stream') and receive JSON payloads
+    whenever broadcast_summary(...) is called.
+    """
+    q = create_queue()
+    SUBSCRIBERS.append(q)
+
+    async def event_generator():
+        try:
+            # initial connected message
+            yield format_sse(json.dumps({"type": "connected", "message": "connected"}))
+            while True:
+                item = await q.get()
+                yield format_sse(json.dumps({"type": "summary", "payload": item}))
+        except asyncio.CancelledError:
+            return
+        finally:
+            # cleanup
+            try:
+                SUBSCRIBERS.remove(q)
+            except Exception:
+                pass
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.post("/draft-reply")
 async def draft_email(request: Request):
@@ -182,7 +248,6 @@ async def inbox(request: Request):
     refresh_token = request.headers.get("x-zoho-refresh")
     emails = await zoho_mail.get_inbox(access_token, refresh_token)
     return {"emails": emails}
-
 
 @app.get("/")
 def root():
