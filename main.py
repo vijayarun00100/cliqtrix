@@ -37,6 +37,8 @@ app.add_middleware(
         "https://mail.zoho.eu",
         "https://mail.zoho.jp",
         "https://mail.zoho.com.cn"
+         "https://127.0.0.1:5000",   # zet run origin
+        "https://localhost:5000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
